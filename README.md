@@ -1,93 +1,143 @@
-# Asignación de Recursos en Redes Inalámbricas Mediante Aprendizaje por refuerzo Profundo con Redes Neuronales de Grafos
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Nahuel1103/Netroml_2.0/1932f0a08537f9b4994512545a8711db51fecd90/logo.png" alt="NetROML Logo" width="400"/>
+  <h1>🌐 NetROML Framework</h1>
+  <p><strong>Optimización de Recursos Inalámbricos mediante Graph Neural Networks (GNNs) y Deep Reinforcement Learning (DRL)</strong></p>
 
+  [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg?style=for-the-badge&logo=python&logoColor=white)](#)
+  [![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white)](#)
+  [![PyG](https://img.shields.io/badge/PyG-Graph_Neural_Networks-3D106B.svg?style=for-the-badge)](#)
+  [![Gymnasium](https://img.shields.io/badge/Gymnasium-RL_Environments-000000.svg?style=for-the-badge)](#)
+</div>
 
+---
 
-## Getting started
+## 📖 Resumen del Proyecto
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Este repositorio contiene el framework de investigación **NetROML**, diseñado para optimizar de manera descentralizada y autónoma los recursos en redes inalámbricas complejas. La topología de la red se modela como un **grafo espacial** que alimenta a una **Graph Neural Network (GNN)**, y mediante **Deep Reinforcement Learning (DRL)**, los agentes aprenden políticas de decisión eficientes para mitigar la interferencia y maximizar el rendimiento global (*Sum Rate*).
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+El repositorio está estructurado para resolver **dos problemas fundamentales**:
 
-## Add your files
+1. **ARPP (Asignación de Recursos en Redes de Enlaces Punto a Punto)**: Optimización estática del canal y potencia de transmisión en redes representadas como grafos de enlaces.
+2. **ARCD (Asignación de Recursos con Clientes Dinámicos)**: Optimización en tiempo real sobre redes dinámicas que simulan la llegada y salida de clientes.
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+---
 
+## 📂 Estructura General del Repositorio
+
+El espacio de trabajo se organiza de la siguiente manera:
+
+```text
+.
+├── Asignación de Recursos en Redes de Enlaces Punto a Punto (ARPP)/  # Problema 1: Enlaces estáticos
+│   ├── Version1/                       # Canal únicamente (REINFORCE)
+│   ├── Version2/                       # Canal y Potencia Conjuntos (REINFORCE)
+│   └── Version1_Sanity_checks/          # Pruebas de funcionamiento
+│
+├── Asignación de Recursos con Clientes Dinámicos (ARCD)/             # Problema 2: Clientes dinámicos
+│   ├── A2C/                            # Implementación de Advantage Actor-Critic
+│   ├── PPO/                            # Implementación de Proximal Policy Optimization
+│   ├── REINFORCE/                      # Implementación de REINFORCE
+│   ├── data/                           # Utilidades de carga y procesamiento de datos
+│   ├── model/                          # Entorno de red y modelos de GNN
+│   ├── simulation/                     # Simulación física de Wi-Fi y arribo de clientes
+│   ├── utils/                          # Encodings posicionales
+│   └── evaluate_synthetic_weighted.py  # Script de evaluación cruzada de baselines
+│
+├── logo.png                            # Logotipo del framework
+└── README.md                           # Documentación principal (este archivo)
 ```
-cd existing_repo
-git remote add origin https://gitlab.fing.edu.uy/netroml/asignacion-de-recursos-en-redes-inalambricas-mediante-aprendizaje-por-refuerzo-profundo-con-redes-neuronales-de-grafos.git
-git branch -M main
-git push -uf origin main
+
+---
+
+## Problema 1: Asignación de Recursos en Redes de Enlaces Punto a Punto (ARPP)
+
+### ❓ ¿Qué hace?
+Resuelve la interferencia en redes estáticas modelando la topología como un **grafo de interferencia**, donde cada nodo del grafo representa un **enlace inalámbrico** (par AP-Cliente) y las aristas representan el canal físico de interferencia mutua. El objetivo es asignar frecuencias (canales) y potencias de transmisión mediante el algoritmo **REINFORCE** para maximizar el *Sum Rate* total.
+
+* **Versión 1**: Los enlaces tienen potencia fija y la GNN solo optimiza los canales en bandas de 2.4GHz / 5GHz.
+* **Versión 2**: Optimización conjunta de la tupla **(Canal, Potencia de Transmisión)** (ej. 100%, 50%, o Apagado).
+
+### 🛠️ ¿Qué hacer? (Instrucciones de Uso)
+
+#### 1. Entrenar el Modelo
+Accede a la carpeta de la versión deseada (`Version1` o `Version2`) e inicia el script de entrenamiento indicando el edificio e hiperparámetros:
+```bash
+cd "Asignación de Recursos en Redes de Enlaces Punto a Punto (ARPP)/Version1/train"
+python train.py --building_id 856 --b5g 0 --num_links 20 --epochs 200 --batch_size 32
+```
+*(Para la Versión 2, usa el mismo comando dentro de `Version2/train/` pero ajustando las epochs recomendadas a `700`)*.
+
+#### 2. Correr Baselines Comparativos
+Para generar las métricas de control (Asignación Aleatoria y Potencia Fija):
+```bash
+cd "../evaluation"
+python final_baseline.py
 ```
 
-## Integrate with your tools
+#### 3. Evaluar Generalización en Nuevos Edificios
+Para comprobar la capacidad de adaptación de la GNN en mapas/topologías de edificios que no vio en el entrenamiento:
+```bash
+python final_generalization.py
+```
 
-* [Set up project integrations](https://gitlab.fing.edu.uy/netroml/asignacion-de-recursos-en-redes-inalambricas-mediante-aprendizaje-por-refuerzo-profundo-con-redes-neuronales-de-grafos/-/settings/integrations)
+#### 4. Graficar y Visualizar Resultados
+Para cruzar las curvas de convergencia de REINFORCE vs Baselines:
+```bash
+python plot_comparison.py
+```
 
-## Collaborate with your team
+---
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+##  Problema 2: Asignación de Recursos con Clientes Dinámicos (ARCD)
 
-## Test and Deploy
+### ❓ ¿Qué hace?
+Aborda un escenario realista donde los clientes de la red Wi-Fi **llegan y se van dinámicamente** a lo largo del tiempo. Simula la física de propagación de señales y el comportamiento temporal del tráfico. Para ello, implementa algoritmos de DRL avanzados para coordinar canales y potencias de APs en tiempo real.
 
-Use the built-in continuous integration in GitLab.
+Admite tres arquitecturas de aprendizaje:
+* **REINFORCE (Vanilla Policy Gradient)**
+* **A2C (Advantage Actor-Critic)**
+* **PPO (Proximal Policy Optimization)**
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+### 🛠️ ¿Qué hacer? (Instrucciones de Uso)
 
-***
+#### 1. Entrenamiento de Algoritmos
+Puedes entrenar la red usando cualquiera de los tres enfoques disponibles. Por ejemplo, para entrenar con **PPO**:
+```bash
+cd "Asignación de Recursos con Clientes Dinámicos (ARCD)/PPO"
+python ppo_train_synthetic.py --building_id 990 --episodes 6000 --device cpu
+```
+Para entrenar con **A2C**:
+```bash
+cd "../A2C"
+python a2c_train_synthetic.py --building_id 990 --episodes 6000
+```
+Para entrenar con **REINFORCE**:
+```bash
+cd "../REINFORCE"
+python reinforce_train_synthetic.py --building_id 990 --episodes 6000
+```
 
-# Editing this README
+#### 2. Evaluación Multivariable de Baselines (Coloración vs GNN)
+Una vez entrenado un modelo (ej. PPO), puedes evaluar su desempeño comparativo frente a un baseline estático heurístico (**Graph Coloring**) y dinámico (**Random**) en una lista de edificios:
+```bash
+cd ..
+python evaluate_synthetic_weighted.py --building_id 990 44 211 --episodes 50 --save_dir "outputs/synthetic_models" --exp_name "ase_completo"
+```
+Este script cargará el modelo guardado en `best_model_ppo.pt`, ejecutará las simulaciones y generará gráficos comparativos absolutos y relativos (boxplots) en el directorio `outputs/synthetic_models/ase_completo/evals/ajustados/`.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+---
 
-## Suggestions for a good README
+## ⚙️ Requisitos y Configuración de Rutas
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Instalar Dependencias
+Se recomienda el uso de un entorno virtual para instalar los paquetes necesarios:
+```bash
+pip install torch numpy networkx matplotlib pandas scipy gymnasium
+pip install torch_geometric
+```
 
-## Name
-Choose a self-explaining name for your project.
+### Rutas de Datos Clave
+Los conjuntos de datos (archivos `.pkl` y matrices de atenuación) deben estar organizados de acuerdo a lo que asume el código:
+* **ARPP**: Espera las topologías en `~/wireless-learning/graphs/`
+* **ARCD**: Utiliza los archivos ubicados en la carpeta `data/` del subdirectorio (ej. `data/matrices_atenuacion/`, `data/from_mac_to_building_id.csv`).
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
