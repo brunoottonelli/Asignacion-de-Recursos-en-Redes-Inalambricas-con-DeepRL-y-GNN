@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Nahuel1103/Netroml_2.0/1932f0a08537f9b4994512545a8711db51fecd90/logo.png" alt="NetROML Logo" width="400"/>
+  <img src="logo.png" alt="NetROML Logo" width="400"/>
   <h1>🌐 NetROML Framework</h1>
   <p><strong>Optimización de Recursos Inalámbricos mediante Graph Neural Networks (GNNs) y Deep Reinforcement Learning (DRL)</strong></p>
 
@@ -13,11 +13,11 @@
 
 ## 📖 Resumen del Proyecto
 
-Este repositorio contiene el framework de investigación **NetROML**, diseñado para optimizar de manera descentralizada y autónoma los recursos en redes inalámbricas complejas. La topología de la red se modela como un **grafo espacial** que alimenta a una **Graph Neural Network (GNN)**, y mediante **Deep Reinforcement Learning (DRL)**, los agentes aprenden políticas de decisión eficientes para mitigar la interferencia y maximizar el rendimiento global (*Sum Rate*).
+Este repositorio contiene el framework de investigación **NetROML**, diseñado para optimizar de manera descentralizada y autónoma los recursos en redes inalámbricas complejas. La topología de la red se modela como un **grafo espacial** que alimenta a una **Graph Neural Network (GNN)**, y mediante **Deep Reinforcement Learning (DRL)**, los agentes aprenden políticas de decisión eficientes para mitigar la interferencia y maximizar el rendimiento global.
 
-El repositorio está estructurado para resolver **dos problemas fundamentales**:
+El repositorio está estructurado para resolver **dos problemas**:
 
-1. **ARPP (Asignación de Recursos en Redes de Enlaces Punto a Punto)**: Optimización estática del canal y potencia de transmisión en redes representadas como grafos de enlaces.
+1. **ARPP (Asignación de Recursos en redes de enlaces Punto a Punto)**: Optimización estática del canal y potencia de transmisión en redes representadas como grafos de enlaces.
 2. **ARCD (Asignación de Recursos con Clientes Dinámicos)**: Optimización en tiempo real sobre redes dinámicas que simulan la llegada y salida de clientes.
 
 ---
@@ -52,7 +52,7 @@ El espacio de trabajo se organiza de la siguiente manera:
 ## Problema 1: Asignación de Recursos en Redes de Enlaces Punto a Punto (ARPP)
 
 ### ❓ ¿Qué hace?
-Resuelve la interferencia en redes estáticas modelando la topología como un **grafo de interferencia**, donde cada nodo del grafo representa un **enlace inalámbrico** (par AP-Cliente) y las aristas representan el canal físico de interferencia mutua. El objetivo es asignar frecuencias (canales) y potencias de transmisión mediante el algoritmo **REINFORCE** para maximizar el *Sum Rate* total.
+Resuelve la interferencia en redes estáticas modelando la topología como un **grafo de interferencia**, donde cada nodo del grafo representa un **enlace inalámbrico** (par AP-AP) y las aristas representan el canal físico de interferencia mutua. El objetivo es asignar frecuencias (canales) y potencias de transmisión mediante el algoritmo **REINFORCE** para maximizar el *Sum Rate* total.
 
 * **Versión 1**: Los enlaces tienen potencia fija y la GNN solo optimiza los canales en bandas de 2.4GHz / 5GHz.
 * **Versión 2**: Optimización conjunta de la tupla **(Canal, Potencia de Transmisión)** (ej. 100%, 50%, o Apagado).
@@ -94,7 +94,7 @@ python plot_comparison.py
 Aborda un escenario realista donde los clientes de la red Wi-Fi **llegan y se van dinámicamente** a lo largo del tiempo. Simula la física de propagación de señales y el comportamiento temporal del tráfico. Para ello, implementa algoritmos de DRL avanzados para coordinar canales y potencias de APs en tiempo real.
 
 Admite tres arquitecturas de aprendizaje:
-* **REINFORCE (Vanilla Policy Gradient)**
+* **REINFORCE**
 * **A2C (Advantage Actor-Critic)**
 * **PPO (Proximal Policy Optimization)**
 
